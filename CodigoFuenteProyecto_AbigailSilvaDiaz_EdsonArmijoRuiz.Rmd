@@ -1,0 +1,100 @@
+---
+title: "Proyecto"
+author: "Abigail Silva Diaz"
+date: "2022-11-23"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+Se hizo un estudio con 100 personas sobre las cinco de las marcas más populares dentro del mercado, para saber que tan probable puede ser que un consumidor permanezca en una sola marca o que vaya cambiando entre ellas a través del tiempo.
+
+```{r}
+library(markovchain)
+#definir estados
+
+stateNames <- c("IPHONE","SAMSUNG","MOTOROLA","HUAWEI","XIAOMI")
+
+#Construir la matriz de probabilidades
+
+m1<-matrix(c(70/100,10/100,0,5/100,15/100,
+             0,65/100,25/100,10/100,0,
+             30/100,0,30/100,30/100,10/100,
+             50/100,0,25/100,0,25/100,
+             0,10/100,0,64/100,26/100),byrow 
+             = TRUE,nrow=5,dimnames = list(stateNames,stateNames))
+
+#construir objeto cadena de markov
+
+mc<-new("markovchain",transitionMatrix=m1, name="PREFERECIA EN MARCA CELULAR")
+
+print(mc)
+```
+
+```{r}
+str(mc)
+```
+
+```{r}
+summary(mc)
+```
+
+```{r}
+plot(mc)
+```
+
+```{r}
+DistEst=steadyStates(mc)#PROBABILIDADES PIJ
+DistEst
+```
+
+```{r}
+transitionProbability(mc, t0="IPHONE",t1="MOTOROLA")
+
+#alternativamente
+mc[1,2]
+```
+
+```{r}
+data(rain)
+str(rain)
+table(rain$rain)
+head(rain)
+PE=rain$rain
+head(PE)
+#la funcion "CreateSequenceMatrix()" crea una matriz de secuencia
+P1=createSequenceMatrix(PE)
+P1
+# La funcion markovchainFit() estima la matriz de transición para el registro de datos
+Fit = markovchainFit (data = PE, confidencelevel = 0.95)
+Fit
+mc = Fit$estimate
+summary(mc)
+plot(mc)
+steadyStates(mc)
+
+```
